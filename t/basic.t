@@ -13,12 +13,11 @@ use_ok "HTTP::Server::Simple::Test";
 
 my $expected_answer = "Hello World";
 
-HTTP::Server::Simple::Test->answer( $expected_answer );
-my $server = HTTP::Server::Simple::Test->new(3024)->background();
+my $server = HTTP::Server::Simple::Test->new();
+$server->answer( $expected_answer );
+$server->background();
 
-my $string = http_get( "http://localhost:3024", { argument1 => "one" } );
-
-print Dumper $string;
+my $string = http_get( "http://localhost:8080", { argument1 => "one" } );
 
 ok( $expected_answer eq $string, "Answer should be a string" );
 

@@ -5,18 +5,23 @@ use base qw/HTTP::Server::Simple::CGI/;
 use strict;
 use warnings;
 
+# SIG ALRM
+
 my $answer;
 
 sub answer{
-    $answer = $_[1];
+    $_[0]->{ answer } = $_[1];
 }
 
 sub handle_request{
     my ( $self, $cgi ) = @_;
 
+    # RESET ALRM TIME
+
     print "HTTP/1.0 200 OK\r\n";
-    print $cgi->header, $answer;
+    print $cgi->header, $self->{ answer } || "";
 }
+
 
 sub setup { }
 
@@ -35,15 +40,17 @@ Version 0.001
 This module is a HTTP server designed to help developers of HTTP clients
 write tests for their applications. It is on namespace Simple because it
 is only to be a stub that gives an http answer that satisfy the client.
+The default port is 8080.
 
 This is an example, to send the information to http client.
 
     use HTTP::Server::Simple::Test;
 
-    HTTP::Server::Simple::Test->answer( "Hello World" );
-    my $server = HTTP::Server::Simple::Test->new( 3000 )->background();
+    my $server = HTTP::Server::Simple::Test->new();
+    $server->answer( "Hello World" );
+    $server->background();
 
-    $any_http_client->post( "http://localhost:3000" );
+    $any_http_client->post( "http://localhost:8080" );
 
     ok( $any_http_client->response, "Hello World", "Basic test");
 
